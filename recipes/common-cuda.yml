@@ -1,0 +1,11 @@
+modules:
+
+  - type: rpm-ostree
+    repos:
+      - https://developer.download.nvidia.com/compute/cuda/repos/fedora%OS_VERSION%/x86_64/cuda-fedora%OS_VERSION%.repo
+    install:
+      - cuda-toolkit-12-8
+    replace:
+      - from-repo: https://developer.download.nvidia.com/compute/cuda/repos/fedora%OS_VERSION%/x86_64/cuda-fedora%OS_VERSION%.repo
+        packages:
+          - libnpp

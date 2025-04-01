@@ -28,6 +28,7 @@ jobs:
         recipe:
           # !! Add your recipes here
           - recipe-aurora-dx-stable.yml
+          - recipe-aurora-dx-nvidia-open-stable.yml
           - recipe-bluefin-dx-stable.yml
     steps:
       # the build is fully handled by the reusable github action
