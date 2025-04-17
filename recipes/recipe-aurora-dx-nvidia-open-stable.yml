@@ -27,7 +27,9 @@ modules:
       - micro
       - starship
 
-  - from-file: common-cuda.yml
+  - from-file: common-ramalama.yml
+  
+  # - from-file: common-cuda.yml
 
   - type: default-flatpaks
     notify: true # Send notification after install/uninstall is finished (true/false)

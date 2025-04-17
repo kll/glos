@@ -27,7 +27,7 @@ modules:
       - micro
       - starship
 
-  #- from-file: common-aws.yml
+  - from-file: common-ramalama.yml
 
   - type: default-flatpaks
     notify: true # Send notification after install/uninstall is finished (true/false)
