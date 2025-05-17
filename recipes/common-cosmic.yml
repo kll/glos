@@ -27,4 +27,5 @@ modules:
       - cosmic-icon-theme
       - cosmic-settings-daemon
       - cosmic-config-fedora
+      - gnome-keyring
       - xdg-desktop-portal-cosmic
