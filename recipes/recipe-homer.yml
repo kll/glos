@@ -14,11 +14,13 @@ image-version: latest
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
+# based on recipe from https://github.com/BTekV4/bazzite-gnome-rocm
 modules:
   
   # Remove unnecessary modules for ROCm
   - type: rpm-ostree
     remove:
+      - akmod-xone
       - ayaneo-platform
       - ayn-platform
       - bmi260
@@ -52,7 +54,6 @@ modules:
       - nct6687d
       - openrazer-kmod-common
       - ryzen-smu
-      - vhba
       - v4l2loopback
       - vhba
       - xone-kmod-common
@@ -73,3 +74,4 @@ modules:
       - gcc
       - make
       - git
+      - flatpak-xdg-utils
