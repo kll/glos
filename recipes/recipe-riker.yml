@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: glos-bazzite-dx
+name: glos-riker
 # description will be included in the image's metadata
 description: Customized bazzite-dx based OS image.
 # custom tags on the recipe’s final image
@@ -9,10 +9,10 @@ alt-tags:
   - latest
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/bazzite-dx
+base-image: ghcr.io/kll/glos-bazzite-dx-nvidia-open
 image-version: latest
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
 modules:
-  - from-file: common-bazzite.yml
+  - from-file: common-ramalama.yml

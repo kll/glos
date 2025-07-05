@@ -9,7 +9,7 @@ alt-tags:
   - latest
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/bazzite-dx
+base-image: ghcr.io/kll/glos-bazzite-dx
 image-version: latest
 
 # module configuration, executed in order
@@ -20,7 +20,6 @@ modules:
   # Remove unnecessary modules for ROCm
   - type: rpm-ostree
     remove:
-      - akmod-xone
       - ayaneo-platform
       - ayn-platform
       - bmi260
@@ -76,4 +75,4 @@ modules:
       - git
       - flatpak-xdg-utils
 
-  - from-file: common-google-chrome.yml
+  - from-file: common-ramalama.yml
