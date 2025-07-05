@@ -1,0 +1,11 @@
+modules:
+  - type: script
+    snippets:
+      - "dnf config-manager setopt google-chrome.enabled=1"
+  
+  - type: dnf
+    optfix:
+      - google
+    install:
+      packages:
+        - google-chrome-stable

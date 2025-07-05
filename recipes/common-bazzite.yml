@@ -9,14 +9,16 @@ modules:
   
   - from-file: common-cosmic.yml
   
+  - from-file: common-google-chrome.yml
+  
   - from-file: common-ramalama.yml
 
   - type: default-flatpaks
     notify: true # Send notification after install/uninstall is finished (true/false)
-    system:
-      # If no repo information is specified, Flathub will be used by default
-      install:
-        - com.google.Chrome
+    # system:
+    #   # If no repo information is specified, Flathub will be used by default
+    #   install:
+    #     - com.google.Chrome
     user: {} # Also add Flathub user repo, but no user packages
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully

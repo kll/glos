@@ -75,3 +75,5 @@ modules:
       - make
       - git
       - flatpak-xdg-utils
+
+  - from-file: common-google-chrome.yml

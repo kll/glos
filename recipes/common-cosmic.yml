@@ -1,31 +1,8 @@
 modules:
 
-  - type: rpm-ostree
-
-    install:
-      - cosmic-applets
-      - cosmic-bg
-      - cosmic-comp
-      - cosmic-edit
-      - cosmic-files
-      - cosmic-greeter
-      - cosmic-launcher
-      - cosmic-notifications
-      - cosmic-osd
-      - cosmic-panel
-      - cosmic-randr
-      - cosmic-screenshot
-      - cosmic-session
-      - cosmic-settings
-      - cosmic-store
-      - cosmic-term
-      - cosmic-workspaces
-      - cosmic-idle
-      - cosmic-player
-      - cosmic-wallpapers
-      - cosmic-app-library
-      - cosmic-icon-theme
-      - cosmic-settings-daemon
-      - cosmic-config-fedora
-      - gnome-keyring
-      - xdg-desktop-portal-cosmic
+  - type: dnf
+    group-install:
+      with-optional: true # install optional packages from group
+      packages:
+        - cosmic-desktop
+        - cosmic-desktop-apps
