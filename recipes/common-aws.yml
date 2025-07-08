@@ -1,12 +1,14 @@
 modules:
 
-  - type: rpm-ostree
+  - type: dnf
     repos:
-      - https://copr.fedorainfracloud.org/coprs/vorona/aws-rpm-packages/repo/fedora-%OS_VERSION%/vorona-aws-rpm-packages-fedora-%OS_VERSION%.repo
+      copr:
+        - vorona/aws-rpm-packages
     optfix:
       - awsvpnclient
     install:
-      - awsvpnclient
+      packages:
+        - awsvpnclient
 
   - type: systemd
     system:
