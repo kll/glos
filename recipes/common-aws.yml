@@ -1,5 +1,6 @@
 modules:
 
+  # install the awsclientvpn package
   - type: dnf
     repos:
       copr:
@@ -10,6 +11,18 @@ modules:
       packages:
         - awsvpnclient
 
+  # copy in the readlink wrapper and systemd drop-in
+  - type: files
+    files:
+      - source: aws
+        destination: /
+  
+  # make the copy of readlink needed by the wrapper
+  - type: script
+    snippets:
+      - "cp /usr/bin/readlink /usr/bin/readlink.orig"
+  
+  # automatically start the service on boot
   - type: systemd
     system:
       enabled:

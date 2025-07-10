@@ -16,10 +16,3 @@ image-version: stable
 # you can include multiple instances of the same module
 modules:
   - from-file: common-aws.yml
-  - type: files
-    files:
-      - source: bill
-        destination: /
-  - type: script
-    snippets:
-      - "cp /usr/bin/readlink /usr/bin/readlink.orig"
