@@ -74,5 +74,3 @@ modules:
       - make
       - git
       - flatpak-xdg-utils
-
-  - from-file: common-ramalama.yml

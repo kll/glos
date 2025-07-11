@@ -1,5 +1,0 @@
-modules:
-
-  - type: rpm-ostree
-    install:
-      - python3-ramalama
