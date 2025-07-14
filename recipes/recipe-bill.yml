@@ -16,3 +16,4 @@ image-version: stable
 # you can include multiple instances of the same module
 modules:
   - from-file: common-aws.yml
+  - from-file: common-slack.yml

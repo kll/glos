@@ -1,0 +1,11 @@
+modules:
+
+  - type: dnf
+    repos:
+      keys:
+        # This isn't actually used at image build time since we are not installying from a repo.
+        - https://slack.com/gpg/slack_pubkey_20240822.gpg
+    install:
+      packages:
+        - https://downloads.slack-edge.com/desktop-releases/linux/x64/4.43.51/slack-4.43.51-0.1.el8.x86_64.rpm
+
