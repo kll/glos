@@ -20,6 +20,7 @@ modules:
   # Remove unnecessary modules for ROCm
   - type: rpm-ostree
     remove:
+      - akmod-v4l2loopback
       - ayaneo-platform
       - ayn-platform
       - bmi260

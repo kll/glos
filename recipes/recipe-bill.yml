@@ -3,7 +3,7 @@
 # image will be published to ghcr.io/<user>/<name>
 name: glos-bill
 # description will be included in the image's metadata
-description: Customized bazzite-dx based OS image.
+description: Customized aurora-dx based OS image.
 # custom tags on the recipe’s final image
 alt-tags:
   - stable
