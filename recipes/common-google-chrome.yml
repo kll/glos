@@ -1,8 +1,14 @@
+# see: https://docs.fedoraproject.org/en-US/quick-docs/installing-chromium-or-google-chrome-browsers/#_installing_chrome_using_terminal
 modules:
+  - type: dnf
+    install:
+      packages:
+        - fedora-workstation-repositories
+
   - type: script
     snippets:
       - "dnf config-manager setopt google-chrome.enabled=1"
-  
+
   - type: dnf
     optfix:
       - google
