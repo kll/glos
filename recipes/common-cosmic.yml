@@ -6,3 +6,9 @@ modules:
       packages:
         - cosmic-desktop
         - cosmic-desktop-apps
+  
+  - type: dnf
+    install:
+      packages:
+        - fedora-release-cosmic-atomic
+        - initial-setup-gui-wayland-cosmic
