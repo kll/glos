@@ -1,0 +1,22 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# image will be published to ghcr.io/<user>/<name>
+name: glos-riker
+# description will be included in the image's metadata
+description: Customized bazzite-dx-nvidia based OS image for machine riker.
+# custom tags on the recipe’s final image
+alt-tags:
+  - latest
+
+# the base image to build on top of (FROM) and the version tag to use
+base-image: ghcr.io/kll/glos-bazzite-dx-nvidia
+image-version: latest
+
+# module configuration, executed in order
+# you can include multiple instances of the same module
+modules:
+  - type: dnf
+    install:
+      packages:
+        - lsp-plugins # for Easy Effects loudness meter
+        - nut
