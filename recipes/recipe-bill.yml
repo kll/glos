@@ -17,8 +17,9 @@ image-version: stable
 modules:
   - from-file: common-aws.yml
   - from-file: common-slack.yml
+  - from-file: common-dotnet.yml
 
   - type: dnf
     install:
       packages:
-        - lsp-plugins # for Easy Effects loudness meter
+        - lsp-plugins         # for Easy Effects loudness meter

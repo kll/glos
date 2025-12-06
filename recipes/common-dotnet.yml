@@ -1,0 +1,17 @@
+modules:
+
+  - type: dnf
+    install:
+      packages:
+        - aspnetcore-runtime-10.0
+        - aspnetcore-runtime-8.0
+        - aspnetcore-targeting-pack-10.0
+        - dotnet-apphost-pack-10.0
+        - dotnet-host
+        - dotnet-hostfxr-10.0
+        - dotnet-runtime-10.0
+        - dotnet-runtime-8.0
+        - dotnet-sdk-10.0
+        - dotnet-sdk-aot-10.0
+        - dotnet-targeting-pack-10.0
+        - dotnet-templates-10.0
