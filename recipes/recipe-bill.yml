@@ -22,4 +22,5 @@ modules:
   - type: dnf
     install:
       packages:
+        - awscli2
         - lsp-plugins         # for Easy Effects loudness meter
