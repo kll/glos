@@ -16,6 +16,8 @@ modules:
   - type: dnf
     install:
       packages:
+        - lxc
+        - lxc-templates
         - nss-mdns
         - python3-jwt
 
