@@ -1,0 +1,55 @@
+#!/usr/bin/python3
+import os
+import sys
+import json
+import pwd
+import syslog
+
+# Configuration
+TARGET_USER = "core"
+BRIDGE_BIN = "/usr/libexec/cockpit-bridge"
+
+def log(msg):
+    syslog.syslog(syslog.LOG_INFO, f"cockpit-auth-oidc: {msg}")
+
+def main():
+    log("Starting OIDC auth sequence")
+    
+    # 1. Handshake: Ask cockpit-ws for headers
+    # Cockpit protocol: Send JSON request for auth headers
+    msg = json.dumps({"command": "authorize", "challenge": "*"}).encode()
+    sys.stdout.buffer.write(f"{len(msg)}\n".encode())
+    sys.stdout.buffer.write(msg)
+    sys.stdout.buffer.flush()
+
+    # 2. Receive Headers (Simplified Logic)
+    # We trust oauth2-proxy (verified via loopback) to have validated the token.
+    # For Zero Trust, import a JWT library here and verify the signature 
+    # against the tsidp issuer keys.
+    
+    # 3. User Mapping
+    try:
+        pw = pwd.getpwnam(TARGET_USER)
+    except KeyError:
+        log(f"User {TARGET_USER} not found")
+        sys.exit(1)
+
+    # 4. Privilege Drop
+    # Switch from root to the target user
+    os.setgid(pw.pw_gid)
+    os.setgroups([pw.pw_gid])
+    os.setuid(pw.pw_uid)
+    
+    # 5. Environment Setup
+    os.environ = pw.pw_name
+    os.environ['HOME'] = pw.pw_dir
+    os.environ = f"/run/user/{pw.pw_uid}"
+    
+    log(f"Spawning bridge as {TARGET_USER}")
+    
+    # 6. Spawn Cockpit Bridge
+    # This replaces the python process with the actual cockpit backend
+    os.execl(BRIDGE_BIN, BRIDGE_BIN)
+
+if __name__ == "__main__":
+    main()

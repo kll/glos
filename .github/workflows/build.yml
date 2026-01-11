@@ -32,6 +32,7 @@ jobs:
           - recipe-aurora-dx-nvidia-open-stable.yml
           - recipe-bazzite-dx-latest.yml
           - recipe-bazzite-dx-nvidia-latest.yml
+          - recipe-ucore.yml
     steps:
       # the build is fully handled by the reusable github action
       - name: Build Custom Image
