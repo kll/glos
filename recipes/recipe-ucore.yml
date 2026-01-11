@@ -13,13 +13,12 @@ base-image: ghcr.io/ublue-os/ucore
 image-version: stable
 
 modules:
-  # 1. Install dependencies for the python script
   - type: dnf
     install:
       packages:
+        - nss-mdns
         - python3-jwt
 
-  # 2. Bake configuration files into the image
   - type: files
     files:
       - source: ucore
