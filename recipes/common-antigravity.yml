@@ -1,0 +1,9 @@
+modules:
+
+  - type: dnf
+    repos:
+      files:
+        - antigravity.repo  # References files/dnf/antigravity.repo
+    install:
+      packages:
+        - antigravity

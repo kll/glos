@@ -17,6 +17,8 @@ image-version: stable
 modules:
   - from-file: common-cosmic.yml
 
+  - from-file: common-antigravity.yml
+
   - type: dnf
     install:
       packages:
