@@ -1,0 +1,15 @@
+modules:
+
+  - type: files
+    files:
+      - source: android-host
+        destination: /
+
+  - type: dnf
+    install:
+      packages:
+        - android-tools
+        - bzip2-libs.i686
+        - java-21-openjdk-devel
+        - ncurses-libs.i686
+        - zlib-ng-compat.i686

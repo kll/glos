@@ -19,6 +19,8 @@ modules:
 
   - from-file: common-antigravity.yml
 
+  - from-file: common-android-host.yml
+
   - type: dnf
     install:
       packages:
