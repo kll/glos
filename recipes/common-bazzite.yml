@@ -5,6 +5,8 @@ modules:
       - source: system
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
   
+  - from-file: common-ghostty.yml
+
   - from-file: common-google-chrome.yml
   
   - from-file: common-flatpaks.yml
