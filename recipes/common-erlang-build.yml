@@ -1,0 +1,8 @@
+modules:
+
+  - type: dnf
+    install:
+      packages:
+        # Minimal native dependencies for source-built Erlang/OTP via mise/kerl.
+        - ncurses-devel
+        - openssl-devel

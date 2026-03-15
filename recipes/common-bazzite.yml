@@ -8,6 +8,8 @@ modules:
   - from-file: common-ghostty.yml
 
   - from-file: common-google-chrome.yml
+
+  - from-file: common-erlang-build.yml
   
   - from-file: common-flatpaks.yml
 
