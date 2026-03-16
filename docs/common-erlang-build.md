@@ -4,10 +4,15 @@ This module adds the base native packages needed for source-built Erlang/OTP ins
 
 It currently installs:
 
+- `gcc-c++` so OTP's JIT C++ build can find the standard library headers
 - `ncurses-devel` so OTP's configure step can find curses functions and headers
 - `openssl-devel` for OTP's SSL applications and build checks
+- `unixODBC-devel` so OTP can build the `odbc` application
+- `wxGTK-devel` so OTP can build `wx` tools such as `observer`
+- `mesa-libGL-devel` and `mesa-libGLU-devel` for wx/OpenGL support
+- `webkit2gtk4.1-devel` so wx webview support is available when supported by the packaged wx build
 
-The goal is to make `mise install erlang` work across the shared desktop base images without pulling in every optional OTP feature dependency.
+The goal is to make `mise install erlang` work across the shared desktop base images with the common optional OTP applications enabled.
 
 ## Files
 
@@ -33,6 +38,6 @@ modules:
 
 ## Notes
 
-- This is intentionally a minimal dependency set.
-- Optional OTP features such as `observer`, ODBC, Java integration, or documentation generation may require additional packages later.
+- This module now includes the common optional dependencies for ODBC and wx-based tooling.
+- Java integration and documentation generation are still not enabled by this module.
 - If a future `mise install erlang` failure reports another missing system library during `configure`, that package can be evaluated for addition here.

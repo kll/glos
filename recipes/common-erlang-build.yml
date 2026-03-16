@@ -3,6 +3,15 @@ modules:
   - type: dnf
     install:
       packages:
-        # Minimal native dependencies for source-built Erlang/OTP via mise/kerl.
+        # Provides g++ and the libstdc++ headers OTP's JIT build needs.
+        - gcc-c++
+        # Core native dependencies for source-built Erlang/OTP via mise/kerl.
         - ncurses-devel
         - openssl-devel
+        # Enable OTP's ODBC application.
+        - unixODBC-devel
+        # Enable wx tools such as observer, including OpenGL and webview support.
+        - mesa-libGL-devel
+        - mesa-libGLU-devel
+        - webkit2gtk4.1-devel
+        - wxGTK-devel
