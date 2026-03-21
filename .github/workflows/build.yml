@@ -60,6 +60,7 @@ jobs:
         recipe:
           - recipe-bill.yml
           - recipe-homer.yml
+          - recipe-mario.yml
           - recipe-riker.yml
     steps:
       # the build is fully handled by the reusable github action

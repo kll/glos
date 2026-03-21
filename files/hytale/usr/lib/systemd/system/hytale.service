@@ -1,0 +1,25 @@
+[Unit]
+Description=Hytale Dedicated Server
+Documentation=https://support.hytale.com/hc/en-us/articles/45326769420827-Hytale-Server-Manual
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/var/lib/hytale/game/start.sh
+
+[Service]
+Type=simple
+User=hytale
+Group=hytale
+WorkingDirectory=/var/lib/hytale/game
+EnvironmentFile=-/etc/hytale/hytale.env
+ExecStart=/var/lib/hytale/game/start.sh
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=120
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/hytale
+
+[Install]
+WantedBy=multi-user.target

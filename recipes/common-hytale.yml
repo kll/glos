@@ -1,0 +1,17 @@
+modules:
+
+  - type: dnf
+    install:
+      packages:
+        - java-25-openjdk-headless
+        - unzip
+
+  - type: files
+    files:
+      - source: hytale
+        destination: /
+
+  - type: systemd
+    system:
+      enabled:
+        - hytale.service
