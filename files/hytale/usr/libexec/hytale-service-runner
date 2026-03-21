@@ -19,8 +19,9 @@ cleanup() {
 
 trap cleanup EXIT
 
-# Keep a writer attached to the FIFO so the launcher keeps a live stdin stream
-# even when no admin command is being injected.
-exec 3>"$console_fifo"
+# Keep the FIFO open read/write so the launcher keeps a live stdin stream
+# even when no admin command is being injected. Opening write-only blocks until
+# a reader exists, which would deadlock before the launcher ever starts.
+exec 3<>"$console_fifo"
 
 exec /usr/libexec/hytale-launcher <"$console_fifo"
