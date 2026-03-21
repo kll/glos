@@ -9,6 +9,8 @@ It installs:
 - a dedicated `hytale` system user and group
 - a tmpfiles definition that pre-creates the writable Hytale runtime directories
 - a systemd unit for running the server through the official Hytale launcher script
+- a FIFO-backed console bridge for sending commands to the running server service
+- a firewalld service and boot-time helper that opens Hytale in the host's default firewall zone
 
 The Hytale server binaries and assets are intentionally **not** installed by this module. They update more frequently than the OS image and should live on the writable filesystem under `/var/lib/hytale`.
 
@@ -21,9 +23,15 @@ The module lives at:
 It copies the Hytale support files from:
 
 - `files/hytale/etc/hytale/hytale.env`
+- `files/hytale/usr/lib/firewalld/services/hytale.xml`
 - `files/hytale/usr/lib/sysusers.d/hytale.conf`
+- `files/hytale/usr/lib/systemd/system/hytale-firewalld.service`
 - `files/hytale/usr/lib/tmpfiles.d/hytale.conf`
 - `files/hytale/usr/lib/systemd/system/hytale.service`
+- `files/hytale/usr/bin/hytale-console`
+- `files/hytale/usr/libexec/hytale-firewall-setup`
+- `files/hytale/usr/libexec/hytale-launcher`
+- `files/hytale/usr/libexec/hytale-service-runner`
 
 ## Runtime Layout
 
@@ -101,10 +109,39 @@ The baked systemd unit does not start until `/var/lib/hytale/game/start.sh` exis
 
 If the downloaded `start.sh` arrives with Windows `CRLF` line endings, the wrapper fixes that automatically before launching it.
 
+On firewalld-based hosts, the image also enables `hytale-firewalld.service`, which adds the custom `hytale` firewall service to the host's default zone. That opens `5520/udp` automatically after boot.
+
+## Service Console Access
+
+When `hytale.service` is running, the image provides a FIFO-backed command bridge at `/run/hytale/console.in` and a helper command:
+
+```console
+sudo hytale-console '/update status'
+sudo hytale-console '/update check'
+sudo hytale-console '/say Server restart in 5 minutes'
+```
+
+For multi-line input or interactive piping:
+
+```console
+printf '/update status\n/update check\n' | sudo hytale-console
+```
+
+To watch console output while the service is running:
+
+```console
+journalctl -fu hytale.service
+```
+
+This is intended for one-shot administrative commands. It does not provide a full terminal attachment like `tmux`, but it does preserve access to server-console commands such as `/update status`, `/update check`, and `/update apply --confirm`.
+
 ## Operations Notes
 
 - The default Hytale server port is `5520/udp`. Open or forward UDP, not TCP.
+- On hosts using `firewalld`, `common-hytale.yml` opens `5520/udp` automatically in the default zone. If a host uses a non-default zone assignment or another firewall stack, adjust that host manually.
 - Keep JVM tuning in `/var/lib/hytale/game/jvm.options`; the official `start.sh` reads it automatically.
+- Use `sudo hytale-console '<command>'` to send Hytale console commands to the running systemd service.
+- Use `journalctl -fu hytale.service` to follow server console output in real time.
 - The official launcher script also handles staged self-updates and preserves config, saves, and mods.
 - Hytale recommends monitoring RAM and CPU usage and tuning memory settings with `-Xmx`.
 - View distance is a major RAM driver; the official manual recommends limiting maximum view distance to 12 chunks.

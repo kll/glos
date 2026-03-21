@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>Hytale</short>
+  <description>Hytale dedicated server</description>
+  <port protocol="udp" port="5520"/>
+</service>

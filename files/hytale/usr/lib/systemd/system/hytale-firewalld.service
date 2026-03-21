@@ -1,0 +1,14 @@
+[Unit]
+Description=Open Hytale Port In firewalld Default Zone
+After=firewalld.service
+Wants=firewalld.service
+ConditionPathExists=/usr/bin/firewall-cmd
+ConditionPathExists=/usr/lib/firewalld/services/hytale.xml
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/hytale-firewall-setup
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

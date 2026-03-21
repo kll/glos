@@ -11,7 +11,7 @@ User=hytale
 Group=hytale
 WorkingDirectory=/var/lib/hytale/game
 EnvironmentFile=-/etc/hytale/hytale.env
-ExecStart=/usr/libexec/hytale-launcher
+ExecStart=/usr/libexec/hytale-service-runner
 Restart=on-failure
 RestartSec=10
 TimeoutStopSec=120
@@ -19,7 +19,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
-ReadWritePaths=/var/lib/hytale
+ReadWritePaths=/var/lib/hytale /run/hytale
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+runtime_dir=/run/hytale
+console_fifo="$runtime_dir/console.in"
+
+install -d -m 0750 -o hytale -g hytale "$runtime_dir"
+
+if [[ -p "$console_fifo" ]]; then
+  rm -f "$console_fifo"
+fi
+
+mkfifo -m 0660 "$console_fifo"
+chown hytale:hytale "$console_fifo"
+
+cleanup() {
+  rm -f "$console_fifo"
+}
+
+trap cleanup EXIT
+
+# Keep a writer attached to the FIFO so the launcher keeps a live stdin stream
+# even when no admin command is being injected.
+exec 3>"$console_fifo"
+
+exec /usr/libexec/hytale-launcher <"$console_fifo"

@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+fifo=/run/hytale/console.in
+
+if [[ ! -p "$fifo" ]]; then
+  echo "Hytale console FIFO is not available. Is hytale.service running?" >&2
+  exit 1
+fi
+
+if [[ $# -gt 0 ]]; then
+  printf '%s\n' "$*" >"$fifo"
+else
+  cat >"$fifo"
+fi
