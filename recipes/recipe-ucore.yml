@@ -16,6 +16,7 @@ modules:
   - type: dnf
     install:
       packages:
+        - btop
         - lxc
         - lxc-templates
         - nss-mdns
