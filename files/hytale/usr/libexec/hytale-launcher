@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+script=/var/lib/hytale/game/start.sh
+
+if [[ ! -f "$script" ]]; then
+  echo "Hytale launcher script not found: $script" >&2
+  exit 1
+fi
+
+# The downloaded launcher may arrive with CRLF line endings, which makes the
+# shebang unusable on Linux. Normalize it in place before execution.
+if grep -q $'\r' "$script"; then
+  sed -i 's/\r$//' "$script"
+fi
+
+exec /usr/bin/bash "$script"

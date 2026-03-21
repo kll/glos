@@ -87,7 +87,7 @@ After rebasing `mario` to the custom image:
 5. Perform the first launch manually so you can complete device authentication:
 
    ```console
-   sudo -u hytale /var/lib/hytale/game/start.sh
+   sudo -u hytale /usr/libexec/hytale-launcher
    ```
 
 6. At the server console, run `/auth login device` and complete the browser flow.
@@ -98,6 +98,8 @@ After rebasing `mario` to the custom image:
    ```
 
 The baked systemd unit does not start until `/var/lib/hytale/game/start.sh` exists, so the image can boot cleanly before the downloader has populated the server.
+
+If the downloaded `start.sh` arrives with Windows `CRLF` line endings, the wrapper fixes that automatically before launching it.
 
 ## Operations Notes
 
