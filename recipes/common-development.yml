@@ -1,0 +1,11 @@
+modules:
+
+  - type: dnf
+    install:
+      packages:
+        - cmake
+        - gcc-c++
+        - make
+        - ninja-build
+        - qt6-qtbase-devel
+        - ripgrep
