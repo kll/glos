@@ -21,6 +21,11 @@ modules:
 
   - from-file: common-android-host.yml
 
+  - type: files
+    files:
+      - source: homer
+        destination: /
+
   - type: dnf
     install:
       packages:
@@ -28,3 +33,5 @@ modules:
         - intel-mediasdk
         - libva-intel-media-driver
         - oneapi-level-zero
+
+  - type: initramfs
