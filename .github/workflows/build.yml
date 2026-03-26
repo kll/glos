@@ -33,6 +33,7 @@ jobs:
           - recipe-bazzite-dx-latest.yml
           - recipe-bazzite-dx-nvidia-latest.yml
           - recipe-ucore.yml
+          - recipe-ucore-hci.yml
     steps:
       # the build is fully handled by the reusable github action
       - name: Build Custom Image
