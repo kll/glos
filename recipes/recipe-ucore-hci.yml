@@ -19,4 +19,5 @@ modules:
         - btop
         - lxc
         - lxc-templates
+        - ncurses-term
         - nss-mdns
