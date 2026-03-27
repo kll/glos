@@ -1,0 +1,9 @@
+modules:
+
+  - type: dnf
+    repos:
+      copr:
+        - jdxcode/mise
+    install:
+      packages:
+        - mise
