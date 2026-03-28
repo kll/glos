@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+if ! systemctl -q is-active firewalld.service; then
+  exit 0
+fi
+
+zone="$(firewall-cmd --get-default-zone)"
+
+if ! firewall-cmd --permanent --zone="$zone" --query-service=mdns >/dev/null 2>&1; then
+  firewall-cmd --permanent --zone="$zone" --add-service=mdns
+fi
+
+if ! firewall-cmd --zone="$zone" --query-service=mdns >/dev/null 2>&1; then
+  firewall-cmd --zone="$zone" --add-service=mdns
+fi

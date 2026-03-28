@@ -1,0 +1,14 @@
+modules:
+
+  # Allow firewalld's predefined mDNS service in the current default zone on boot.
+  # This avoids manual `firewall-cmd --add-service=mdns` on first boot when the
+  # host defaults to a zone like FedoraServer that does not permit mDNS.
+  - type: files
+    files:
+      - source: mdns
+        destination: /
+
+  - type: systemd
+    system:
+      enabled:
+        - mdns-firewalld.service

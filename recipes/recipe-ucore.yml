@@ -13,6 +13,8 @@ base-image: ghcr.io/ublue-os/ucore
 image-version: stable
 
 modules:
+  - from-file: common-mdns.yml
+
   - type: dnf
     install:
       packages:

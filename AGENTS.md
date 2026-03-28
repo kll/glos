@@ -13,4 +13,5 @@
 
 # Documentation
 
+- Prefer short inline comments in the relevant `recipes/*.yml` or `recipes/common-*.yml` file to explain personal-image customizations. Only add standalone docs in `docs/` when the setup genuinely needs longer instructions that would be awkward inline.
 - For BlueBuild-specific modules, recipe semantics, and initramfs/dracut behavior, verify against current upstream BlueBuild documentation instead of assuming from memory.

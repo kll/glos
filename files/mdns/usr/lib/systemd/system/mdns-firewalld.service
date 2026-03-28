@@ -1,0 +1,14 @@
+[Unit]
+Description=Allow mDNS in firewalld Default Zone
+After=firewalld.service
+Wants=firewalld.service
+ConditionPathExists=/usr/bin/firewall-cmd
+ConditionPathExists=/usr/lib/firewalld/services/mdns.xml
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/mdns-firewall-setup
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
