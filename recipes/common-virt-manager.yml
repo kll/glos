@@ -1,0 +1,8 @@
+modules:
+
+  - type: dnf
+    install:
+      packages:
+        # Use the native package so virt-manager can access the host SSH stack and
+        # mDNS-discovered libvirt targets without Flatpak sandbox limitations.
+        - virt-manager

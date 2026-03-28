@@ -16,6 +16,7 @@ image-version: latest
 # you can include multiple instances of the same module
 modules:
   - from-file: common-development.yml
+  - from-file: common-virt-manager.yml
 
   - type: dnf
     install:
