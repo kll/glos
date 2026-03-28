@@ -1,0 +1,7 @@
+modules:
+
+  # Build kvmfr against the image's pinned CoreOS kernel because the upstream
+  # COPR packages are akmods-based and do not depsolve cleanly in ucore-hci.
+  - type: script
+    scripts:
+      - build-kvmfr.sh

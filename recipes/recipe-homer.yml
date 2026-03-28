@@ -20,6 +20,8 @@ modules:
       - source: homer
         destination: /
 
+  - from-file: common-kvmfr.yml
+
   - from-file: common-mise.yml
 
   - type: initramfs
