@@ -13,6 +13,8 @@ base-image: ghcr.io/ublue-os/ucore-hci
 image-version: stable
 
 modules:
+  - from-file: common-cli.yml
+
   - from-file: common-mdns.yml
 
   - type: dnf

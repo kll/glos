@@ -8,4 +8,3 @@ modules:
         - make
         - ninja-build
         - qt6-qtbase-devel
-        - ripgrep
