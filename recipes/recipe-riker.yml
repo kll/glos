@@ -23,3 +23,4 @@ modules:
       packages:
         - lsp-plugins # for Easy Effects loudness meter
         - nut
+        - podman-compose
