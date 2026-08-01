@@ -24,6 +24,11 @@ modules:
 
   - from-file: common-mise.yml
 
+  - type: dnf
+    install:
+      packages:
+        - zsh
+
   # uCore can temporarily contain an incomplete module tree for Fedora's
   # newer kernel-headers package, which the initramfs module treats as a kernel.
   - type: script
