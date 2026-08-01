@@ -69,3 +69,13 @@ depmod -a "${KERNEL_VERSION}"
 if (( ${#missing_build_deps[@]} > 0 )); then
   dnf -y remove "${missing_build_deps[@]}"
 fi
+
+if [[ ! -f "/usr/lib/modules/${KERNEL_VERSION}/modules.dep" ]]; then
+  echo "Kernel ${KERNEL_VERSION} has no modules.dep after installing kvmfr" >&2
+  exit 1
+fi
+
+if ! modinfo -k "${KERNEL_VERSION}" kvmfr >/dev/null; then
+  echo "kvmfr is not indexed for kernel ${KERNEL_VERSION}" >&2
+  exit 1
+fi

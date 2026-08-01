@@ -24,4 +24,10 @@ modules:
 
   - from-file: common-mise.yml
 
+  # uCore can temporarily contain an incomplete module tree for Fedora's
+  # newer kernel-headers package, which the initramfs module treats as a kernel.
+  - type: script
+    scripts:
+      - prune-orphan-kernel-trees.sh
+
   - type: initramfs
