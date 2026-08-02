@@ -1,2 +1,2 @@
-# Allow the two unprivileged game containers to attach to Homer's LAN bridge.
-kevin veth br0 2
+# Allow up to 5 unprivileged containers to attach to Homer's LAN bridge.
+kevin veth br0 5
