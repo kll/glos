@@ -24,3 +24,4 @@ modules:
         - lsp-plugins # for Easy Effects loudness meter
         - nut
         - podman-compose
+        - https://zoom.us/client/latest/zoom_x86_64.rpm
