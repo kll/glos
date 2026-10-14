@@ -30,6 +30,7 @@ jobs:
           # !! Add your recipes here
           - recipe-aurora-dx-stable.yml
           - recipe-aurora-dx-nvidia-open-stable.yml
+          - recipe-bazzite-dx-gnome-stable.yml
           - recipe-bazzite-dx-latest.yml
           - recipe-bazzite-dx-nvidia-latest.yml
           - recipe-ucore.yml

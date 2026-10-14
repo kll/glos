@@ -3,13 +3,13 @@
 # image will be published to ghcr.io/<user>/<name>
 name: glos-bill
 # description will be included in the image's metadata
-description: Customized aurora-dx based OS image for machine bill.
+description: Customized bazzite-dx-gnome based OS image for machine bill.
 # custom tags on the recipe’s final image
 alt-tags:
   - stable
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/kll/glos-aurora-dx
+base-image: ghcr.io/kll/glos-bazzite-dx-gnome
 image-version: stable
 
 # module configuration, executed in order
