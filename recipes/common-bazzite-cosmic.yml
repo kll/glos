@@ -1,0 +1,55 @@
+modules:
+  # Turns a bazzite(-dx)-gnome base into a COSMIC-only desktop while keeping
+  # everything else Bazzite provides (OGC kernel, kmods, Terra mesa/gamescope, ujust, ...).
+  # COSMIC is installed first so shared libraries it needs stay put during the removal.
+  - from-file: common-cosmic.yml
+
+  # Remove the GNOME shell, session, display manager and GNOME-only apps/glue.
+  # auto-remove is off so only these packages go; shared GTK/GNOME libraries,
+  # gvfs and gnome-keyring (used by COSMIC and GTK apps) are kept.
+  - type: dnf
+    remove:
+      auto-remove: false
+      packages:
+        # shell, session and login screen
+        - gdm
+        - gnome-shell
+        - gnome-shell-common
+        - gnome-shell-extension-common
+        - gnome-shell-extension-gsconnect
+        - gnome-shell-extension-user-theme
+        - gnome-browser-connector
+        - gnome-session
+        - gnome-session-wayland-session
+        - mutter
+        - mutter-common
+        - gnome-settings-daemon
+        - gnome-control-center
+        - gnome-control-center-filesystem
+        - xdg-desktop-portal-gnome
+        - gnome-remote-desktop
+        - gnome-user-share
+        - gnome-color-manager
+        # GNOME apps replaced by COSMIC apps (Files, Terminal, help not needed)
+        - nautilus
+        - nautilus-extensions
+        - nautilus-python
+        - nautilus-gsconnect
+        - papers-nautilus
+        - ptyxis
+        - yelp
+        - gnome-user-docs
+        # GNOME wallpapers and GNOME-specific browser/Steam Deck tweaks
+        - gnome-backgrounds
+        - desktop-backgrounds-gnome
+        - fedora-chromium-config-gnome
+        # Bazzite packages that only exist to integrate with GNOME
+        - gnome-search-yafti
+        - steamdeck-gnome-presets
+        # gnome-disk-utility is kept on purpose: COSMIC has no disk utility yet.
+
+  # Use COSMIC's login screen instead of GDM.
+  - type: systemd
+    system:
+      enabled:
+        - cosmic-greeter.service

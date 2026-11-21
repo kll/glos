@@ -3,7 +3,7 @@
 # image will be published to ghcr.io/<user>/<name>
 name: glos-bill
 # description will be included in the image's metadata
-description: Customized bazzite-dx-gnome based OS image for machine bill.
+description: Bazzite (dx) with the COSMIC desktop instead of GNOME, for machine bill.
 # custom tags on the recipe’s final image
 alt-tags:
   - stable
@@ -15,6 +15,9 @@ image-version: stable
 # module configuration, executed in order
 # you can include multiple instances of the same module
 modules:
+  # replace GNOME with a native COSMIC desktop and apps
+  - from-file: common-bazzite-cosmic.yml
+
   - type: dnf
     install:
       packages:

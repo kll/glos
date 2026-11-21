@@ -1,14 +1,18 @@
 modules:
 
+  # Full COSMIC desktop plus all of its native apps (Files, Terminal, Text Editor,
+  # Settings, Store, Media Player, ...). Safe to layer onto any Fedora-based image.
+  # Deliberately omits fedora-release-cosmic-atomic (it claims the OS identity, which
+  # Bazzite/Aurora own) and initial-setup-gui-wayland-cosmic (those images ship their
+  # own first-boot setup). Add those back only for a pure Fedora COSMIC Atomic image.
   - type: dnf
     group-install:
       with-optional: true # install optional packages from group
+      # Fedora's group fills COSMIC's gaps with GNOME apps; skip them for a
+      # COSMIC-only desktop (use flatpaks like Mission Center / a calculator instead).
+      exclude:
+        - gnome-calculator
+        - gnome-system-monitor
       packages:
         - cosmic-desktop
         - cosmic-desktop-apps
-  
-  - type: dnf
-    install:
-      packages:
-        - fedora-release-cosmic-atomic
-        - initial-setup-gui-wayland-cosmic
