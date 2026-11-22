@@ -1,0 +1,43 @@
+modules:
+
+  # Podman only, with Docker compatibility for tools that expect Docker.
+  # Removes Docker CE (daemon, containerd, CLI, buildx and compose plugins) and
+  # installs podman-docker, which provides:
+  # - /usr/bin/docker, a shim that runs podman (/etc/containers/nodocker below
+  #   silences its "Emulate Docker CLI" notice)
+  # - DOCKER_HOST pointing at the rootless Podman socket in login shells
+  # - /run/docker.sock linked to the rootful Podman socket, for tools that
+  #   hardcode that path (root only)
+  # docker-compose is the standalone Compose v2 binary; `docker compose` and
+  # `podman compose` both run it against the Podman socket (files/podman-docker
+  # also silences podman's banner about using it).
+  # Existing Docker data in /var/lib/docker is left in place; see
+  # docs/common-podman-docker.md for moving volumes over.
+  - type: dnf
+    remove:
+      auto-remove: false
+      packages:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+
+  # Separate step so Docker's /usr/bin/docker is gone before podman-docker
+  # installs its own.
+  - type: dnf
+    install:
+      packages:
+        - podman-docker
+        - docker-compose
+
+  - type: files
+    files:
+      - source: podman-docker
+        destination: /
+
+  # Rootless Podman API socket for every user (what DOCKER_HOST points at).
+  - type: systemd
+    user:
+      enabled:
+        - podman.socket

@@ -21,6 +21,9 @@ modules:
   # 75-80% charge limit, suspend-then-hibernate, low-battery hibernate
   - from-file: common-laptop-power.yml
 
+  # Podman only, with the Docker CLI/API emulated on top of it
+  - from-file: common-podman-docker.yml
+
   - type: dnf
     install:
       packages:
