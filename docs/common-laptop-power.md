@@ -2,7 +2,27 @@
 
 Battery care for laptops: an 80% charge limit, suspend-then-hibernate, and
 hibernating at low battery before a deep discharge. Files are in
-`files/laptop-power/`.
+`files/laptop-power/`, and the ujust recipes are in
+`files/justfiles/laptop-power.just`.
+
+## ujust commands
+
+Run any of these without an option to get a menu.
+
+| Command | Options |
+| --- | --- |
+| `ujust battery-status` | Battery health, charge limit, suspend mode, swap file, lockdown, deep-sleep counter |
+| `ujust battery-charge-limit` | `status`, `50`–`100` (where charging stops), `off` (charge to 100%), `on`, `default` (80) |
+| `ujust hibernate-delay` | `status`, a time span like `90min` or `4h`, `default` (2h) |
+| `ujust suspend-then-hibernate` | `status`, `enable`, `disable` (plain suspend, never hibernates) |
+
+A charge limit of N starts charging again below N-5%. `off` and `on` keep the
+current window, so `off` before a trip and `on` afterwards gets you back to
+the same limit. The settings are written to `/etc` and survive image updates:
+
+- Charge window: `/etc/udev/rules.d/62-glos-battery-charge-limit-local.rules`
+- Hibernate delay: `/etc/systemd/sleep.conf.d/60-glos-local-hibernate-delay.conf`
+- Plain suspend: `/etc/systemd/system/systemd-suspend.service.d/60-glos-local-plain-suspend.conf`
 
 ## What the image ships
 
@@ -22,38 +42,24 @@ Resume needs no `resume=` karg. systemd-sleep writes the swap file's location
 to the `HibernateLocation` EFI variable, and the initrd's
 `systemd-hibernate-resume-generator` reads it. Hibernation also needs a kernel
 without lockdown. Fedora kernels turn lockdown on under Secure Boot; Bazzite's
-kernel currently does not (`cat /sys/kernel/security/lockdown` shows
-`[none]`). If a later kernel does turn it on, hibernation is refused and
-systemd keeps the laptop suspended instead.
+kernel currently does not (`ujust battery-status` shows it). If a later kernel
+does turn it on, hibernation is refused and systemd keeps the laptop suspended
+instead.
 
 ## Checks
 
 ```sh
-# Charge limit (expect 75 / 80, and "charge-threshold-enabled: yes")
-cat /sys/class/power_supply/BAT0/charge_control_{start,end}_threshold
-upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -i threshold
-
-# Hibernation swap file (expect /var/swap/swapfile next to zram)
-swapon --show
+ujust battery-status
 
 # Test hibernation once, then check the log after resume
 systemctl hibernate
 journalctl -b -1 -u systemd-suspend.service -u systemd-hibernate.service
 ```
 
-To check that s2idle reaches the deepest state, read
-`/sys/devices/system/cpu/cpuidle/low_power_idle_system_residency_us`, suspend
-for a few minutes, and read it again: the number should have grown. If it
-stays 0, suspend never reaches the lowest-power state and the battery drains a
-few % per hour while asleep.
-
-## Temporary full charge
-
-```sh
-busctl call org.freedesktop.UPower /org/freedesktop/UPower/devices/battery_BAT0 \
-  org.freedesktop.UPower.Device EnableChargeThreshold b false
-# ...later, b true turns it back on. UPower remembers the setting.
-```
+`battery-status` also shows the deep-sleep counter
+(`low_power_idle_system_residency_us`). Suspend for a few minutes and run it
+again: the number should have grown. If it stays 0, suspend never reaches the
+lowest-power state and the battery drains a few % per hour while asleep.
 
 ## Removing the swap file
 

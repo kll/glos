@@ -1,0 +1,178 @@
+#!/usr/bin/bash
+# Backend for the battery ujust recipes (files/justfiles/laptop-power.just).
+#   glos-laptop-power status
+#   glos-laptop-power charge-limit [status|on|off|default|50-100]
+#   glos-laptop-power hibernate-delay [status|default|<timespan>]
+#   glos-laptop-power suspend-then-hibernate [status|enable|disable]
+set -euo pipefail
+
+limit_rule=/etc/udev/rules.d/62-glos-battery-charge-limit-local.rules
+delay_conf=/etc/systemd/sleep.conf.d/60-glos-local-hibernate-delay.conf
+plain_suspend_conf=/etc/systemd/system/systemd-suspend.service.d/60-glos-local-plain-suspend.conf
+upower_iface=org.freedesktop.UPower.Device
+
+die() { echo "error: $*" >&2; exit 1; }
+as_root() { if (( EUID == 0 )); then "$@"; else sudo "$@"; fi; }
+write_root() { as_root install -D -m 0644 /dev/stdin "$1"; }
+
+# Interactive menu when no option was given on a terminal, otherwise "status".
+pick() {
+  if [[ -t 0 && -t 1 ]] && command -v gum >/dev/null; then
+    gum choose "$@"
+  else
+    echo status
+  fi
+}
+
+find_battery() {
+  local b
+  for b in /sys/class/power_supply/BAT*; do
+    [[ -e "$b/charge_control_end_threshold" ]] && { echo "$b"; return; }
+  done
+  return 1
+}
+
+upower_path() { echo "/org/freedesktop/UPower/devices/battery_$(basename "$1")"; }
+
+upower_prop() {
+  busctl get-property org.freedesktop.UPower "$1" "$upower_iface" "$2" 2>/dev/null | awk '{ print $2 }'
+}
+
+# Polkit allows this for the active local session; fall back to sudo (e.g. over SSH).
+upower_enable() {
+  local path="$1" enabled="$2"
+  busctl call org.freedesktop.UPower "$path" "$upower_iface" EnableChargeThreshold b "$enabled" 2>/dev/null \
+    || as_root busctl call org.freedesktop.UPower "$path" "$upower_iface" EnableChargeThreshold b "$enabled"
+}
+
+charge_limit_status() {
+  local bat="$1" path
+  path="$(upower_path "$bat")"
+  echo "Battery:        $(basename "$bat")"
+  echo "Charge limit:   $( [[ "$(upower_prop "$path" ChargeThresholdEnabled)" == true ]] && echo on || echo "off (charges to 100%)" )"
+  if (( $(<"$bat/charge_control_end_threshold") >= 100 )); then
+    echo "Firmware:       no limit"
+  else
+    echo "Firmware:       start charging below $(<"$bat/charge_control_start_threshold")%, stop at $(<"$bat/charge_control_end_threshold")%"
+  fi
+  if [[ -f "$limit_rule" ]]; then
+    echo "Custom limit:   $(grep -o 'CHARGE_LIMIT}="[^"]*"' "$limit_rule" | cut -d'"' -f2) (from $limit_rule)"
+  else
+    echo "Custom limit:   none (image default 75,80)"
+  fi
+}
+
+# Write thresholds to firmware, then restart UPower so it adopts them (it reads
+# live sysfs values at startup) and record the limit as enabled.
+apply_limit() {
+  local bat="$1" start="$2" end="$3" path
+  path="$(upower_path "$bat")"
+  as_root udevadm control --reload
+  as_root udevadm trigger --action=change "$bat"
+  # Start at 0 first so the firmware never sees start >= end in between.
+  echo 0 | as_root tee "$bat/charge_control_start_threshold" >/dev/null
+  echo "$end" | as_root tee "$bat/charge_control_end_threshold" >/dev/null
+  echo "$start" | as_root tee "$bat/charge_control_start_threshold" >/dev/null
+  as_root systemctl restart upower.service
+  for _ in {1..20}; do
+    [[ -n "$(upower_prop "$path" ChargeThresholdSupported)" ]] && break
+    sleep 0.25
+  done
+  upower_enable "$path" true
+}
+
+cmd_charge_limit() {
+  local bat action="${1:-}" end start
+  bat="$(find_battery)" || die "no battery with charge threshold support found"
+  [[ -n "$action" ]] || action="$(pick status 60 70 80 90 off on default)"
+
+  case "$action" in
+    status) charge_limit_status "$bat"; return ;;
+    on)
+      upower_enable "$(upower_path "$bat")" true ;;
+    off|100)
+      upower_enable "$(upower_path "$bat")" false
+      echo "Charge limit off: the battery will charge to 100%."
+      echo "Run 'ujust battery-charge-limit on' to turn it back on." ;;
+    default)
+      as_root rm -f "$limit_rule"
+      apply_limit "$bat" 75 80 ;;
+    *)
+      if ! [[ "$action" =~ ^[0-9]+$ ]] || (( action < 50 || action > 99 )); then
+        die "expected status, on, off, default, or a stop percentage from 50 to 100"
+      fi
+      end="$action"
+      start=$(( end - 5 ))
+      printf '# Written by ujust battery-charge-limit. Overrides the image default (75,80).\nSUBSYSTEM=="power_supply", ATTR{type}=="Battery", ENV{CHARGE_LIMIT}="%s,%s"\n' \
+        "$start" "$end" | write_root "$limit_rule"
+      apply_limit "$bat" "$start" "$end" ;;
+  esac
+  charge_limit_status "$bat"
+}
+
+current_delay() {
+  systemd-analyze cat-config systemd/sleep.conf 2>/dev/null \
+    | awk -F= '/^HibernateDelaySec=/ { v = $2 } END { print (v == "" ? "unset" : v) }'
+}
+
+cmd_hibernate_delay() {
+  local action="${1:-}"
+  [[ -n "$action" ]] || action="$(pick status 30min 1h 2h 4h 8h default)"
+  case "$action" in
+    status) ;;
+    default) as_root rm -f "$delay_conf" ;;
+    *)
+      systemd-analyze timespan "$action" >/dev/null 2>&1 || die "'$action' is not a time span (try 90min, 2h, 1d)"
+      printf '# Written by ujust hibernate-delay.\n[Sleep]\nHibernateDelaySec=%s\n' "$action" | write_root "$delay_conf" ;;
+  esac
+  echo "Asleep on battery before hibernating: $(current_delay)"
+}
+
+s2h_enabled() { systemctl show -p ExecStart systemd-suspend.service | grep -q 'suspend-then-hibernate'; }
+
+cmd_s2h() {
+  local action="${1:-}"
+  [[ -n "$action" ]] || action="$(pick status enable disable)"
+  case "$action" in
+    status) ;;
+    enable)
+      as_root rm -f "$plain_suspend_conf"
+      as_root systemctl daemon-reload ;;
+    disable)
+      printf '# Written by ujust suspend-then-hibernate disable.\n[Service]\nExecStart=\nExecStart=/usr/lib/systemd/systemd-sleep suspend\n' \
+        | write_root "$plain_suspend_conf"
+      as_root systemctl daemon-reload ;;
+    *) die "expected status, enable or disable" ;;
+  esac
+  if s2h_enabled; then
+    echo "Suspend: suspend-then-hibernate (hibernates after $(current_delay) on battery)"
+  else
+    echo "Suspend: plain suspend (never hibernates on its own)"
+  fi
+}
+
+cmd_status() {
+  local bat full design
+  if bat="$(find_battery)"; then
+    full="$(cat "$bat/energy_full" 2>/dev/null || cat "$bat/charge_full")"
+    design="$(cat "$bat/energy_full_design" 2>/dev/null || cat "$bat/charge_full_design")"
+    echo "== Battery"
+    echo "Level:          $(<"$bat/capacity")% ($(<"$bat/status"))"
+    echo "Health:         $(( full * 100 / design ))% of design capacity, $(cat "$bat/cycle_count" 2>/dev/null || echo '?') cycles"
+    charge_limit_status "$bat"
+  fi
+  echo
+  echo "== Sleep"
+  cmd_s2h status
+  echo "Hibernate swap: $(awk '$1 == "/var/swap/swapfile" { printf "%d GiB active", $3 / 1048576; found = 1 } END { if (!found) printf "not active" }' /proc/swaps)"
+  echo "Kernel lockdown: $(grep -o '\[[a-z]*\]' /sys/kernel/security/lockdown 2>/dev/null || echo unknown) (must be [none] to hibernate)"
+  echo "Deep s2idle time: $(( $(cat /sys/devices/system/cpu/cpuidle/low_power_idle_system_residency_us 2>/dev/null || echo 0) / 1000000 ))s since boot (stays 0 if suspend never reaches the lowest-power state)"
+}
+
+case "${1:-status}" in
+  status) cmd_status ;;
+  charge-limit) shift; cmd_charge_limit "$@" ;;
+  hibernate-delay) shift; cmd_hibernate_delay "$@" ;;
+  suspend-then-hibernate) shift; cmd_s2h "$@" ;;
+  *) die "unknown command '$1'" ;;
+esac

@@ -2,15 +2,13 @@ modules:
 
   # Battery care for laptops:
   # - Charge limit: UPower's charge threshold is on by default at 75-80%.
-  #   Charge to 100% once with `busctl call org.freedesktop.UPower
-  #   /org/freedesktop/UPower/devices/battery_BAT0 org.freedesktop.UPower.Device
-  #   EnableChargeThreshold b false` and back on with `... b true`.
   # - Sleep: every suspend becomes suspend-then-hibernate. On battery the laptop
   #   hibernates after 2h (or below 5%); on AC it stays suspended.
   # - Hibernation: glos-hibernate-swap.service creates a RAM-sized btrfs swap
   #   file at /var/swap/swapfile on first boot. zram stays the primary swap.
   # - Deep discharge: UPower hibernates at 7% instead of hybrid-sleeping at 2%.
-  # See docs/common-laptop-power.md for checks and how to undo each piece.
+  # Change these per machine with `ujust battery-status`, `battery-charge-limit`,
+  # `hibernate-delay` and `suspend-then-hibernate` (see docs/common-laptop-power.md).
   - type: files
     files:
       - source: laptop-power
@@ -21,3 +19,8 @@ modules:
       enabled:
         - var-swap-swapfile.swap
 
+  # ujust recipes above; they call /usr/libexec/glos-laptop-power
+  - type: justfiles
+    validate: true
+    include:
+      - laptop-power.just

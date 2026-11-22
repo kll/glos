@@ -2,4 +2,5 @@
 # stop at 80%. Matches upower's current hwdb default (60-upower-battery.hwdb)
 # but keeps it fixed if that default ever changes. UPower prefers thresholds
 # already stored in firmware, so this applies when the firmware has none set.
+# `ujust battery-charge-limit <N>` overrides it with a rule in /etc/udev/rules.d.
 SUBSYSTEM=="power_supply", ATTR{type}=="Battery", ENV{CHARGE_LIMIT}="75,80"
