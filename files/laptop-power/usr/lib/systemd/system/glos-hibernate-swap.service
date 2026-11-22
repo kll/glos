@@ -1,0 +1,12 @@
+[Unit]
+Description=Prepare disk swap file for hibernation
+Documentation=file:///usr/libexec/glos-hibernate-swap
+DefaultDependencies=no
+RequiresMountsFor=/var
+Conflicts=shutdown.target
+Before=var-swap-swapfile.swap swap.target shutdown.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/libexec/glos-hibernate-swap

@@ -1,0 +1,56 @@
+#!/usr/bin/bash
+# Create (once) and keep usable a btrfs swap file at /var/swap/swapfile that is
+# big enough to hibernate to. Runs early on every boot before
+# var-swap-swapfile.swap is activated. zram stays the main swap; systemd skips
+# zram when choosing where to hibernate, and passes this file's location to the
+# initrd through the HibernateLocation EFI variable, so no resume= karg is needed.
+set -euo pipefail
+
+swap_dir=/var/swap
+swap_file="$swap_dir/swapfile"
+
+log() { echo "glos-hibernate-swap: $*"; }
+
+if [[ "$(stat -f -c %T /var)" != "btrfs" ]]; then
+  log "/var is not btrfs, skipping hibernation swap setup"
+  exit 0
+fi
+
+# Swap file must hold all of RAM; round up to whole GiB.
+mem_kib="$(awk '/^MemTotal:/ { print $2 }' /proc/meminfo)"
+size_gib=$(( (mem_kib + 1048575) / 1048576 ))
+size_bytes=$(( size_gib * 1073741824 ))
+
+is_active() { awk -v f="$swap_file" 'NR > 1 && $1 == f { found = 1 } END { exit !found }' /proc/swaps; }
+
+# Recreate the file if RAM grew past it (and it is not in use).
+if [[ -f "$swap_file" ]] && ! is_active && (( $(stat -c %s "$swap_file") < size_bytes )); then
+  log "existing swap file is smaller than RAM, recreating"
+  rm -f "$swap_file"
+fi
+
+if [[ ! -f "$swap_file" ]]; then
+  # Keep at least 20 GiB free after creating the file.
+  avail_bytes="$(df --output=avail -B1 /var | tail -n 1 | tr -d ' ')"
+  if (( avail_bytes < size_bytes + 20 * 1073741824 )); then
+    log "not enough free space on /var for a ${size_gib}G swap file, skipping"
+    exit 0
+  fi
+
+  # A dedicated subvolume keeps the swap file out of any /var snapshot
+  # (btrfs cannot snapshot a subvolume with an active swap file).
+  if [[ ! -e "$swap_dir" ]]; then
+    btrfs subvolume create "$swap_dir"
+  fi
+  chmod 0700 "$swap_dir"
+
+  log "creating ${size_gib}G swap file at $swap_file"
+  # Allocates a NOCOW, uncompressed file and runs mkswap on it.
+  btrfs filesystem mkswapfile --size "${size_gib}g" "$swap_file"
+fi
+
+# Fedora's policy labels /var/swap as var_t, which swapon refuses. Re-apply
+# every boot in case a relabel reset it.
+if command -v selinuxenabled >/dev/null && selinuxenabled; then
+  chcon -t swapfile_t "$swap_file"
+fi

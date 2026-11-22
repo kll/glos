@@ -18,6 +18,9 @@ modules:
   # replace GNOME with a native COSMIC desktop and apps
   - from-file: common-bazzite-cosmic.yml
 
+  # 75-80% charge limit, suspend-then-hibernate, low-battery hibernate
+  - from-file: common-laptop-power.yml
+
   - type: dnf
     install:
       packages:

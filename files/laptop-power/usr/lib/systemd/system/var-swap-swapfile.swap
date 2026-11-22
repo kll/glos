@@ -1,0 +1,14 @@
+[Unit]
+Description=Disk swap file for hibernation
+Wants=glos-hibernate-swap.service
+After=glos-hibernate-swap.service
+ConditionPathExists=/var/swap/swapfile
+
+[Swap]
+What=/var/swap/swapfile
+# Below zram (priority 100), so day-to-day swapping still goes to zram. systemd
+# ignores zram for hibernation and picks this file instead.
+Priority=0
+
+[Install]
+WantedBy=swap.target

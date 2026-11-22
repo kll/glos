@@ -1,0 +1,5 @@
+# Default charge window for UPower's charge limit: start charging below 75%,
+# stop at 80%. Matches upower's current hwdb default (60-upower-battery.hwdb)
+# but keeps it fixed if that default ever changes. UPower prefers thresholds
+# already stored in firmware, so this applies when the firmware has none set.
+SUBSYSTEM=="power_supply", ATTR{type}=="Battery", ENV{CHARGE_LIMIT}="75,80"
