@@ -8,7 +8,7 @@
 
 # Validation
 
-- Validate recipe changes locally with `bluebuild build -v ./recipes/<recipe>.yml`.
+- Validate recipe changes locally with `bluebuild build -v -B podman ./recipes/<recipe>.yml`. Always pass `-B podman`: BlueBuild's Docker driver has to load the result into Docker's image store, which refuses images over 125 layers (`max depth exceeded`). The Bazzite-based images are past that.
 - If a local build fails during final export/import with `no space left on device`, treat that as a host storage problem unless an earlier module step failed.
 
 # Documentation
