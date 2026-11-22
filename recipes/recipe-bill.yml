@@ -18,6 +18,12 @@ modules:
   # replace GNOME with a native COSMIC desktop and apps
   - from-file: common-bazzite-cosmic.yml
 
+  # Ignore bill's built-in ELAN touchscreen to prevent ghost clicks.
+  - type: files
+    files:
+      - source: bill
+        destination: /
+
   # 75-80% charge limit, suspend-then-hibernate, low-battery hibernate
   - from-file: common-laptop-power.yml
 
