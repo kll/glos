@@ -6,3 +6,4 @@ modules:
         scope: system
         install:
           - com.discordapp.Discord
+          - it.mijorus.gearlever
