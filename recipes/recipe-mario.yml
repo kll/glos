@@ -16,7 +16,6 @@ image-version: stable
 # you can include multiple instances of the same module
 modules:
   - from-file: common-development.yml
-  - from-file: common-erlang-build.yml
   - from-file: common-mise.yml
   # Podman only, with the Docker CLI/API emulated on top of it
   - from-file: common-podman-docker.yml
