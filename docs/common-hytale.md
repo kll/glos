@@ -72,11 +72,9 @@ modules:
   - from-file: common-hytale.yml
 ```
 
-`recipes/recipe-mario.yml` is the machine-specific image for the `mario` host and already includes this module.
+## Host Setup
 
-## Host Setup On Mario
-
-After rebasing `mario` to the custom image:
+After rebasing a host to an image that includes this module:
 
 1. Confirm Java 25 is available:
 
@@ -151,5 +149,5 @@ This is intended for one-shot administrative commands. It does not provide a ful
 Recipe changes can be validated locally with:
 
 ```console
-bluebuild build -v ./recipes/recipe-mario.yml
+bluebuild build -v -B podman ./recipes/<recipe>.yml
 ```

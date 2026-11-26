@@ -3,14 +3,21 @@
 # image will be published to ghcr.io/<user>/<name>
 name: glos-mario
 # description will be included in the image's metadata
-description: Customized ucore based OS image for machine mario running a Hytale dedicated server.
-# custom tags on the recipe's final image
+description: Bazzite (dx) with the COSMIC desktop for development machine mario.
+# custom tags on the recipe’s final image
 alt-tags:
   - stable
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/kll/glos-ucore
+base-image: ghcr.io/kll/glos-bazzite-dx-cosmic
 image-version: stable
 
+# module configuration, executed in order
+# you can include multiple instances of the same module
 modules:
-  - from-file: common-hytale.yml
+  - from-file: common-development.yml
+  - from-file: common-erlang-build.yml
+  - from-file: common-mise.yml
+  # Podman only, with the Docker CLI/API emulated on top of it
+  - from-file: common-podman-docker.yml
+  - from-file: common-virt-manager.yml

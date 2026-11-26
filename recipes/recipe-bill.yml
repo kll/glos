@@ -9,15 +9,12 @@ alt-tags:
   - stable
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/kll/glos-bazzite-dx-gnome
+base-image: ghcr.io/kll/glos-bazzite-dx-cosmic
 image-version: stable
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
 modules:
-  # replace GNOME with a native COSMIC desktop and apps
-  - from-file: common-bazzite-cosmic.yml
-
   # Ignore bill's built-in ELAN touchscreen to prevent ghost clicks.
   - type: files
     files:

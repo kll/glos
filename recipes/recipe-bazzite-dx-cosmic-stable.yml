@@ -1,9 +1,9 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: glos-bazzite-dx-gnome
+name: glos-bazzite-dx-cosmic
 # description will be included in the image's metadata
-description: Customized bazzite-dx-gnome based OS image.
+description: Customized bazzite-dx based OS image with the COSMIC desktop instead of GNOME.
 # custom tags on the recipe’s final image
 alt-tags:
   - stable
@@ -16,3 +16,5 @@ image-version: stable
 # you can include multiple instances of the same module
 modules:
   - from-file: common-bazzite.yml
+  # replace GNOME with a native COSMIC desktop and apps
+  - from-file: common-bazzite-cosmic.yml
