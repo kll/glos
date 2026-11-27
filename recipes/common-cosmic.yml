@@ -16,3 +16,12 @@ modules:
       packages:
         - cosmic-desktop
         - cosmic-desktop-apps
+
+  # Fedora 45 replaced gnome-keyring with oo7 (oo7-daemon/oo7-portal/pam_oo7),
+  # which cosmic-desktop pulls in, but oo7-daemon.service is not enabled in
+  # Fedora's default user preset and has no D-Bus activation file. Enable it
+  # globally so org.freedesktop.secrets is available to GUI apps on login.
+  - type: systemd
+    user:
+      enabled:
+        - oo7-daemon.service

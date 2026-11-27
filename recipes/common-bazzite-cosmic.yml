@@ -5,8 +5,8 @@ modules:
   - from-file: common-cosmic.yml
 
   # Remove the GNOME shell, session, display manager and GNOME-only apps/glue.
-  # auto-remove is off so only these packages go; shared GTK/GNOME libraries,
-  # gvfs and gnome-keyring (used by COSMIC and GTK apps) are kept.
+  # auto-remove is off so only these packages go; shared GTK/GNOME libraries
+  # and gvfs are kept.
   - type: dnf
     remove:
       auto-remove: false
