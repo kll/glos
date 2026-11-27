@@ -70,6 +70,15 @@ if (( ${#missing_build_deps[@]} > 0 )); then
   dnf -y remove "${missing_build_deps[@]}"
 fi
 
+# Installing elfutils-libelf-devel can upgrade libzstd via libzstd-devel without
+# upgrading zstd; the zstd CLI refuses to run when its version mismatches libzstd,
+# which breaks dracut in the initramfs module and zstd at runtime.
+if rpm -q zstd libzstd >/dev/null 2>&1; then
+  if [[ "$(rpm -q --qf '%{VERSION}' zstd)" != "$(rpm -q --qf '%{VERSION}' libzstd)" ]]; then
+    dnf -y upgrade zstd
+  fi
+fi
+
 if [[ ! -f "/usr/lib/modules/${KERNEL_VERSION}/modules.dep" ]]; then
   echo "Kernel ${KERNEL_VERSION} has no modules.dep after installing kvmfr" >&2
   exit 1
